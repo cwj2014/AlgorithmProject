@@ -15,7 +15,7 @@ INCLUDE_DIRECTORIES(src ${PROJECT_BINARY_DIR})
 #target
 ADD_EXECUTABLE(AlgorithmTest main.cpp)
 
-SET(LIBS algorithm_impl)
+SET(LIBS algorithm_impl mysqlclient)
 
 #link lib
 TARGET_LINK_LIBRARIES(AlgorithmTest ${LIBS})

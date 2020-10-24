@@ -2,5 +2,8 @@
 
 int main(){
     binarySearchTest();
+    mysqlTest();
+    stringReverseTest();
+    findSubStringTest();
     return 0;
 }
