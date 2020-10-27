@@ -5,5 +5,7 @@ int main(){
     mysqlTest();
     stringReverseTest();
     findSubStringTest();
+    allRangeTest();
+    combinationTest();
     return 0;
 }
