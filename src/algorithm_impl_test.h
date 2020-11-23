@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stack>
 #include <algorithm>
 #include <functional>
 #include "common.h"
@@ -16,5 +17,9 @@ void findSubStringTest();
 void allRangeTest();
 //组合测试
 void combinationTest();
+//求子集
+void findSubSetsTest();
 //MySQL测试
 void mysqlTest();
+//常见排序测试
+void sortTest();

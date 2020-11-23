@@ -7,5 +7,7 @@ int main(){
     findSubStringTest();
     allRangeTest();
     combinationTest();
+    findSubSetsTest();
+    sortTest();
     return 0;
 }

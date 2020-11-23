@@ -1,5 +1,6 @@
 #include "algorithm_impl_test.h"
  #include <math.h>
+ #include <set>
 
 
 class FindCommonTool{
@@ -47,6 +48,121 @@ public:
             return "";
         }
         return find_suffix_common_devide_core(v, 0, size-1);
+    }
+    
+    static int get_longest_common_substring_length(string s1, string s2){
+        int m = s1.length();
+        int n = s2.length();
+        if(m == 0 || n == 0) return 0;
+        vector<vector<int>> dp(m+1, vector<int>(n+1));
+        int longest = 0;
+        for(int i=0; i<=m; i++){
+            for(int j=0; j<=n; j++){
+                if(i==0 || j==0){
+                    dp[i][j] = 0;
+                }else if(s1[i-1] == s2[j-1]){
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                }else{
+                    dp[i][j] = 0;
+                }
+                longest = std::max(longest, dp[i][j]);
+            }
+        }
+        return longest;
+    }
+    static vector<string> get_all_longest_common_substring(string s1, string s2){
+        int m = s1.length();
+        int n = s2.length();
+        vector<string> vec;
+        if(m == 0 || n == 0) return vec;
+        vector<vector<int>> dp(m+1, vector<int>(n+1));
+        int longest = 0;
+        for(int i=0; i<=m; i++){
+            for(int j=0; j<=n; j++){
+                if(i==0 || j==0){
+                    dp[i][j] = 0;
+                }else if(s1[i-1] == s2[j-1]){
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                }else{
+                    dp[i][j] = 0;
+                }
+                longest = std::max(longest, dp[i][j]);
+            }
+        }
+        set<string> ret;
+        for(int i=1; i<=m; i++){
+            for(int j=1; j<=n; j++){
+                if(dp[i][j] == longest){
+                    string s = s1.substr(i-longest, longest);
+                    ret.insert(s);
+                }
+            }
+        }
+        vec.assign(ret.begin(), ret.end());
+        return vec;
+    }
+    static int get_longest_common_sequence_length(string s1, string s2){
+        int m = s1.length();
+        int n = s2.length();
+        if(m == 0 || n == 0) return 0;
+        vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
+        int longest = 0;
+        for(int i=1; i<=m; i++){
+            for(int j=1; j<=n; j++){
+                if(s1[i-1] == s2[j-1]){
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                }else{
+                    dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+                }
+                longest = max(longest, dp[i][j]);
+            }
+        }
+        return longest;
+    }
+    static vector<string> get_all_longest_common_sequence(string s1, string s2){
+        int m = s1.length();
+        int n = s2.length();
+        vector<string> vec;
+        if(m == 0 || n == 0) return vec;
+         vector<vector<int>> dp(m+1, vector<int>(n+1, 0));
+        int longest = 0;
+        for(int i=1; i<=m; i++){
+            for(int j=1; j<=n; j++){
+                if(s1[i-1] == s2[j-1]){
+                    dp[i][j] = dp[i-1][j-1] + 1;
+                }else{
+                    dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+                }
+                longest = max(longest, dp[i][j]);
+            }
+        }
+
+        set<string> ret;
+        function<void(int, int, string)> traceback = [&](int m, int n, string cur){
+            while(m > 0 && n >0){
+                if(s1[m-1] == s2[n-1]){
+                    cur.push_back(s1[m-1]);
+                    m--;
+                    n--;
+                }else if(dp[m-1][n] > dp[m][n-1]){
+                    m--;
+                }else if(dp[m-1][n] < dp[m][n-1]){
+                    n--;
+                }else{
+                    traceback(m-1, n, cur);
+                    traceback(m, n-1, cur);
+                    return;
+                }
+            }
+            if(cur.size() == longest){
+                reverse(cur.begin(), cur.end());
+                ret.insert(cur);
+            }
+        };
+        string cur = "";
+        traceback(m, n, cur);
+        vec.assign(ret.begin(), ret.end());
+        return vec;
     }
 private:
     static string find_prefix_common_devide_core(vector<string> v, int begin, int end){
@@ -229,6 +345,89 @@ private:
     }
 };
 
+class FindLongestSubstringTool{
+public:
+    static int findlongestSubstringLengthWithMoveWindow(string s){
+        int n = s.length();
+        if(n == 0) return 0;
+        int start = 0;
+        int length = 0;
+        for(int i=0; i<n; i++){
+            for(int j=start; j<i; j++){
+                if(s[j] == s[i]){
+                    start = j + 1;
+                    break;
+                }
+            }
+            int l = i - start + 1;//[start, i]
+            if(l > length){
+                length = l;
+            }
+        }
+        return length;
+    }
+    static int findlongestSubstringLengthWithHashMap(string s){
+        int n = s.length();
+        if(n == 0) return 0;
+        int start = 0;
+        int length = 0;
+        vector<int> hashmap(128, -1);//128 asci
+        for(int i=0; i<n; i++){
+            if(hashmap[s[i]] > -1){
+                start =  hashmap[s[i]] + 1;
+            }
+            hashmap[s[i]] = i;
+            int l = i - start + 1;//[start, i]
+            if(l > length){
+                length = l;
+            }
+        }
+        return length;
+    }
+    static string findlongestSubstringWithMoveWindow(string s){
+        int n = s.length();
+        if(n == 0) return "";
+        int start = 0;
+        int index = 0;
+        int length = 0;
+        for(int i=0; i<n; i++){
+            for(int j=start; j<i; j++){
+                if(s[j] == s[i]){
+                    start = j+1;
+                    break;
+                }
+            }
+            int l = i - start + 1;//[start, i]
+            if(l > length){
+                length = l;
+                index = start;
+            }
+        }
+        return s.substr(index, length);
+    }
+
+    static string findlongestSubstringWithHashmap(string s){
+        int n = s.length();
+        if(n == 0) return "";
+        int start = 0;
+        int index = 0;
+        int length = 0;
+        vector<int> hashmap(128, -1);//128 asci
+        for(int i=0; i<n; i++){
+            if(hashmap[s[i]] > -1){
+                start = hashmap[s[i]] + 1;
+            }
+            hashmap[s[i]] = i;
+            int l = i - start + 1;//[start, i]
+            if(l > length){
+                length = l;
+                index = start;
+            }
+        }
+        return s.substr(index, length);
+    }
+};
+
 
 void findSubStringTest(){
     cout << "FindCommonTool::find_prefix_common_depth_first(vector<string>{\"flower\",\"flow\",\"flight\"})" 
@@ -266,4 +465,9 @@ void findSubStringTest(){
     cout << "PalindromTool::isPalindromNumber(121)" << PalindromTool::isPalindromNumber(121) << endl;
     cout << "PalindromTool::isPalindromNumber(1221)" << PalindromTool::isPalindromNumber(1221) << endl;
     cout << "PalindromTool::isPalindromNumber(-1221)" << PalindromTool::isPalindromNumber(-1221) << endl;
+
+    vector<string> ret = FindCommonTool::get_all_longest_common_substring("ABCBDAB", "BDCABA");
+    printStrings(ret);
+    ret = FindCommonTool::get_all_longest_common_sequence("ABCBDAB", "BDCABA");
+    printStrings(ret);
 }
